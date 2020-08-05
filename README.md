@@ -1,4 +1,4 @@
 # Mr Swift
 
-A person Discord bot in development
+A personal Discord bot in development
 
