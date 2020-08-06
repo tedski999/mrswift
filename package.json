@@ -1,0 +1,22 @@
+{
+  "name": "mrswift",
+  "version": "1.0.0",
+  "description": "A personal Discord bot for Nu Nu Get Swifty",
+  "main": "app/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tedski999/mrswift.git"
+  },
+  "author": "Ted Johnson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tedski999/mrswift/issues"
+  },
+  "homepage": "https://github.com/tedski999/mrswift#readme",
+  "dependencies": {
+    "discord.js": "^12.2.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.6.0"
+  }
+}

@@ -1,0 +1,10 @@
+/node_modules/*
+
+# Do not include private or generated data files
+/data/*
+!/data/config.json
+!/data/defaultGuildSettings.json
+!/data/text/
+
+# Ignore generated logs
+/logs/*
