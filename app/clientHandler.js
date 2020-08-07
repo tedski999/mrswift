@@ -1,9 +1,11 @@
 "use strict";
 const process = require("process");
 const Utils = require("./utils.js");
+const config = require("../data/config.json");
 
 function onReady(client) {
 	this.client = client;
+	this.client.user.setPresence(config.defaults.status);
 	Utils.log(
 		Utils.formatText("Client ready, logged in as '%s'.", this.client.user.username),
 		Utils.LOG_LEVEL.NOTEWORTHY);
@@ -43,6 +45,13 @@ function onShardDisconnect(event, id) {
 		Utils.LOG_LEVEL.WARNING);
 }
 
+function setStatus(status, activity, text) {
+	this.client.user.setPresence({
+		status: status,
+		activity: { type: activity.toUpperCase(), name: text }
+	});
+}
+
 function exit() {
 	Utils.log("Exiting...", Utils.LOG_LEVEL.NOTEWORTHY);
 	this.client.destroy();
@@ -52,5 +61,5 @@ function exit() {
 module.exports = {
 	onReady, onShardReady, onShardResume,
 	onShardError, onShardReconnecting, onShardDisconnect,
-	exit
+	setStatus, exit
 };

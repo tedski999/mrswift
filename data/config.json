@@ -1,0 +1,17 @@
+{
+	"defaults": {
+
+		"status": {
+			"status": "dnd",
+			"activity": {
+				"type": "LISTENING",
+				"name": "Renai Circulation"
+			}
+		},
+
+		"guildSettings": {
+			"prefix": "=",
+			"operators": []
+		}
+	}
+}
