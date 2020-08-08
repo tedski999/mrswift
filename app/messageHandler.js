@@ -1,8 +1,8 @@
 "use strict";
-const Utils = require("./utils.js");
+const utils = require("./utils.js");
 
 function onMessage(message) {
-	Utils.log(Utils.formatText("Message: %s", message), Utils.LOG_LEVEL.ERROR);
+	utils.log(utils.formatText("Message: %s", message), utils.LOG_LEVEL.ERROR);
 }
 
 module.exports = { onMessage };
