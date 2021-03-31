@@ -1,38 +1,41 @@
+"use strict";
 const process = require("process");
-const { Client } = require("discord.js");
-const InteractionHandler = require("./interactions/handler.js");
-const client = new Client();
+const DiscordJS = require("discord.js");
+const Util = require("./util.js");
 
-//const SQLite = require("better-sqlite3");
-//const sql = new SQLite("./scores.sqlite");
-
-const { token } = require("../data/private.json");
-
-client.on("ready", () => {
-  console.log("Login successful");
-
-  // DEBUG
-  client.api.applications(client.user.id).guilds("729350100991737928").commands.post({
-    data: {
-      name: "ping",
-      description: "description goes here"
-    }
-  });
-
-  // Register interaction handler callback
-  client.ws.on("INTERACTION_CREATE", InteractionHandler.bind(client));
-});
-
-// Parse CLI arguments
+// Handle CLI arguments
 const args = process.argv.slice(2);
-args.forEach(arg => {
+for (const arg of args) {
   switch (arg) {
   case "-r":
   case "--register-global-interactions":
     // TODO: register all our global interactions once we've logged in
     break;
   }
-});
+}
+
+// Setup Discord bot
+const client = new DiscordJS.Client();
+
+// Register event callbacks
+const eventFilepaths = Util.readdirRecursiveSync("./app/events");
+for (const filename of eventFilepaths) {
+  const event = require(filename);
+  client.on(event.name, (...args) => event.execute(client, ...args));
+}
+
+// Register websocket interaction callback
+const Interactions = require("./interactions.js");
+client.ws.on("INTERACTION_CREATE", Interactions.handle.bind(null, client));
+
+// Load commands
+client.commands = new DiscordJS.Collection();
+const commandFilepaths = Util.readdirRecursiveSync("./app/commands");
+for (const filename of commandFilepaths) {
+  const command = require(filename);
+  client.commands.set(command.name, command);
+}
 
 // Start Discord bot
+const { token } = require("../data/private.json");
 client.login(token);
