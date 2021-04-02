@@ -2,41 +2,55 @@
 const path = require("path");
 const process = require("process");
 const DiscordJS = require("discord.js");
+const Logger = require("./logger.js");
 const Util = require("./util.js");
 
-// Handle CLI arguments
+Logger.console.group("Processing Command-Line Arguments:");
 const args = process.argv.slice(2);
 for (const arg of args) {
   switch (arg) {
   case "-r":
   case "--register-global-interactions":
-    // TODO: register all our global interactions once we've logged in
+    Logger.console.error(arg + ": TODO register all our global interactions once we've logged in");
     break;
+  default:
+    Logger.console.error(arg + ": Argument not recognized!");
+    process.exit();
   }
 }
+Logger.console.groupEnd();
 
-// Setup Discord bot
+Logger.console.group("Setting up DiscordJS:");
+
+Logger.console.log("Initializing DiscordJS client...");
 const client = new DiscordJS.Client();
 
-// Register event callbacks
+Logger.console.group("Registering DiscordJS event callbacks:");
 const eventFilepaths = Util.readdirRecursiveSync(path.resolve(__dirname, "events"));
-for (const filename of eventFilepaths) {
-  const event = require(filename);
+for (const filepath of eventFilepaths) {
+  const event = require(filepath);
   client.on(event.name, (...args) => event.execute(client, ...args));
+  Logger.console.log("- ", event.name);
 }
+Logger.console.groupEnd();
 
-// Register websocket interaction callback
+Logger.console.group("Loading DiscordJS command collection:");
+client.commands = new DiscordJS.Collection();
+const commandFilepaths = Util.readdirRecursiveSync(path.resolve(__dirname, "commands"));
+for (const filepath of commandFilepaths) {
+  const command = require(filepath);
+  client.commands.set(command.name, command);
+  Logger.console.log("- ", command.name);
+}
+Logger.console.groupEnd();
+
+Logger.console.log("Registering DiscordJS Interaction callback...");
 const Interactions = require("./interactions.js");
 client.ws.on("INTERACTION_CREATE", Interactions.handle.bind(null, client));
 
-// Load commands
-client.commands = new DiscordJS.Collection();
-const commandFilepaths = Util.readdirRecursiveSync(path.resolve(__dirname, "commands"));
-for (const filename of commandFilepaths) {
-  const command = require(filename);
-  client.commands.set(command.name, command);
-}
+Logger.console.groupEnd();
+Logger.console.log("Setup complete.");
 
-// Start Discord bot
+Logger.console.log("Logging into Discord...");
 const { token } = require("../data/private.json");
 client.login(token);
