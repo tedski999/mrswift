@@ -3,13 +3,13 @@ const fs = require("fs");
 const path = require("path");
 const DiscordJS = require("discord.js");
 
-// TODO: this probably doesn't concat files very well, not tested with multiple directories
 function readdirRecursiveSync(root = ".") {
   const entries = fs.readdirSync(root, { withFileTypes: true });
-  return entries.map(entry => {
-    const res = path.resolve(root, entry.name);
-    return entry.isDirectory() ? readdirRecursiveSync(res) : res;
+  const filepaths = entries.map(entry => {
+    const entrypath = path.resolve(root, entry.name);
+    return entry.isDirectory() ? readdirRecursiveSync(entrypath) : entrypath;
   });
+  return filepaths.flat();
 }
 
 function createDiscordMessageEmbed() {
