@@ -18,7 +18,7 @@ for (const arg of args) {
 const client = new DiscordJS.Client();
 
 // Register event callbacks
-const eventFilepaths = Util.readdirRecursiveSync("./app/events");
+const eventFilepaths = Util.readdirRecursiveSync(__dirname + "/events");
 for (const filename of eventFilepaths) {
   const event = require(filename);
   client.on(event.name, (...args) => event.execute(client, ...args));
@@ -30,7 +30,7 @@ client.ws.on("INTERACTION_CREATE", Interactions.handle.bind(null, client));
 
 // Load commands
 client.commands = new DiscordJS.Collection();
-const commandFilepaths = Util.readdirRecursiveSync("./app/commands");
+const commandFilepaths = Util.readdirRecursiveSync(__dirname + "/commands");
 for (const filename of commandFilepaths) {
   const command = require(filename);
   client.commands.set(command.name, command);
