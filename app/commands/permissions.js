@@ -1,7 +1,7 @@
 "use strict";
 
 function execute() {
-  return "Pong!";
+  return "An overview of the guild permissions";
 }
 
 function help() {
@@ -10,9 +10,9 @@ function help() {
 
 module.exports = {
   arguments: [],
-  defaultPermission: 0,
+  defautPermission: 0,
   guildExecutable: true,
-  dmExecutable: true,
+  dmExecutable: false,
   execute,
   help
 };

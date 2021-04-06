@@ -2,6 +2,7 @@
 const path = require("path");
 const process = require("process");
 const DiscordJS = require("discord.js");
+const Commands = require("./commands.js");
 const Logger = require("./logger.js");
 const Util = require("./util.js");
 
@@ -22,10 +23,11 @@ Logger.console.groupEnd();
 
 Logger.console.group("Setting up DiscordJS:");
 
-Logger.console.log("Initializing DiscordJS client...");
+Logger.console.log("Initializing client...");
 const client = new DiscordJS.Client();
 
-Logger.console.group("Registering DiscordJS event callbacks:");
+Logger.console.group("Registering event callbacks:");
+Logger.console.time("Done");
 const eventFilepaths = Util.readdirRecursiveSync(path.resolve(__dirname, "events"));
 for (const filepath of eventFilepaths) {
   const event = require(filepath);
@@ -33,18 +35,15 @@ for (const filepath of eventFilepaths) {
   Logger.console.log("- ", event.name);
 }
 Logger.console.groupEnd();
+Logger.console.timeStop("Done");
 
-Logger.console.group("Loading DiscordJS command collection:");
-client.commands = new DiscordJS.Collection();
-const commandFilepaths = Util.readdirRecursiveSync(path.resolve(__dirname, "commands"));
-for (const filepath of commandFilepaths) {
-  const command = require(filepath);
-  client.commands.set(command.name, command);
-  Logger.console.log("- ", command.name);
-}
+Logger.console.group("Generating command tree:");
+Logger.console.time("Done");
+client.commandTree = new Commands.generateTree(path.resolve(__dirname, "commands"));
 Logger.console.groupEnd();
+Logger.console.timeStop("Done");
 
-Logger.console.log("Registering DiscordJS Interaction callback...");
+Logger.console.log("Registering interaction callback...");
 const Interactions = require("./interactions.js");
 client.ws.on("INTERACTION_CREATE", Interactions.handle.bind(null, client));
 

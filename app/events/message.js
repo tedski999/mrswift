@@ -13,9 +13,17 @@ function execute(client, message) {
 
   // Attempt to parse and execute messages that look like commands
   if (message.content.startsWith(prefix)) {
-    const commandArgs = message.content.slice(prefix.length).trim().split(/ +/);
-    const commandName = commandArgs.shift().toLowerCase();
-    const response = Commands.handle(client, commandName, commandArgs);
+
+    // Construct a command from the message
+    const command = {
+      tokens: message.content.slice(prefix.length).trim().split(/ +/),
+      user: message.user,
+      message: message.id
+      // TODO: member/guild/channel
+    };
+
+    // Attempt to find and execute the command
+    const response = Commands.handle(client, command);
     message.channel.send(response);
   }
 }
